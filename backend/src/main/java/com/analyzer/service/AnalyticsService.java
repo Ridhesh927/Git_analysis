@@ -2,10 +2,10 @@ package com.analyzer.service;
 
 import com.analyzer.dto.AnalyticsResponseDTO;
 import com.analyzer.dto.ContributorDTO;
-import com.analyzer.model.Contributor;
 import com.analyzer.model.Repository;
 import com.analyzer.repository.ContributorRepository;
 import com.analyzer.repository.RepositoryRepository;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -33,7 +33,7 @@ public class AnalyticsService {
     /**
      * Full analytics for a repository: repo stats + issue stats + contributors + language.
      */
-    public AnalyticsResponseDTO getFullAnalytics(Long repoId) {
+    public AnalyticsResponseDTO getFullAnalytics(@NonNull Long repoId) {
         Repository repo = repoRepo.findById(repoId)
                 .orElseThrow(() -> new RuntimeException("Repository not found: " + repoId));
 
@@ -60,7 +60,7 @@ public class AnalyticsService {
     /**
      * Top N contributors by commit count.
      */
-    public List<ContributorDTO> getTopContributors(Long repoId, int limit) {
+    public List<ContributorDTO> getTopContributors(@NonNull Long repoId, int limit) {
         return contributorRepo.findByRepoIdOrderByContributionsDesc(repoId).stream()
                 .limit(limit)
                 .map(c -> ContributorDTO.builder()
@@ -76,7 +76,7 @@ public class AnalyticsService {
     /**
      * PR merge trends over the last N days (count per week).
      */
-    public List<Map<String, Object>> getPRTrends(Long repoId, int days) {
+    public List<Map<String, Object>> getPRTrends(@NonNull Long repoId, int days) {
         // Placeholder — real implementation queries issueRepo by date buckets
         return Collections.emptyList();
     }

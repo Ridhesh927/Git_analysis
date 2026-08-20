@@ -3,7 +3,6 @@ package com.analyzer.service;
 import com.analyzer.dto.RepoStatsDTO;
 import com.analyzer.model.Repository;
 import com.analyzer.repository.RepositoryRepository;
-import com.analyzer.util.DataProcessor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,14 +14,11 @@ public class RepositoryService {
 
     private final RepositoryRepository repoRepo;
     private final GitHubAPIService githubAPIService;
-    private final DataProcessor dataProcessor;
 
     public RepositoryService(RepositoryRepository repoRepo,
-                             GitHubAPIService githubAPIService,
-                             DataProcessor dataProcessor) {
+                             GitHubAPIService githubAPIService) {
         this.repoRepo = repoRepo;
         this.githubAPIService = githubAPIService;
-        this.dataProcessor = dataProcessor;
     }
 
     /**
@@ -37,7 +33,7 @@ public class RepositoryService {
     /**
      * Get a stored repository by ID.
      */
-    public RepoStatsDTO getById(Long id) {
+    public RepoStatsDTO getById(long id) {
         Repository repo = repoRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Repository not found with id: " + id));
         Map<String, Long> languages = githubAPIService.fetchLanguages(repo.getOwner(), repo.getName());
@@ -47,7 +43,7 @@ public class RepositoryService {
     /**
      * Get language breakdown for a repository.
      */
-    public Map<String, Long> getLanguages(Long id) {
+    public Map<String, Long> getLanguages(long id) {
         Repository repo = repoRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Repository not found with id: " + id));
         return githubAPIService.fetchLanguages(repo.getOwner(), repo.getName());

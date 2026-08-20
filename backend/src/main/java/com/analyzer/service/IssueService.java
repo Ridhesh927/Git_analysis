@@ -5,13 +5,11 @@ import com.analyzer.model.Issue;
 import com.analyzer.model.Repository;
 import com.analyzer.repository.IssueRepository;
 import com.analyzer.repository.RepositoryRepository;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class IssueService {
@@ -30,7 +28,7 @@ public class IssueService {
     /**
      * Fetch + refresh issues for a repository, return filtered list.
      */
-    public List<Issue> getIssues(Long repoId, String state) {
+    public List<Issue> getIssues(@NonNull Long repoId, String state) {
         Repository repo = getRepo(repoId);
         githubAPIService.fetchAndSaveIssues(repo.getOwner(), repo.getName(), repoId);
         if (state != null && !state.isBlank()) {
@@ -42,7 +40,7 @@ public class IssueService {
     /**
      * Fetch + refresh PRs for a repository.
      */
-    public List<Issue> getPullRequests(Long repoId, String state) {
+    public List<Issue> getPullRequests(@NonNull Long repoId, String state) {
         Repository repo = getRepo(repoId);
         githubAPIService.fetchAndSaveIssues(repo.getOwner(), repo.getName(), repoId);
         List<Issue> prs = issueRepo.findByRepoIdAndIsPullRequest(repoId, true);
@@ -55,7 +53,7 @@ public class IssueService {
     /**
      * Calculate issue stats (open/closed counts, avg close time).
      */
-    public IssueStatsDTO getIssueStats(Long repoId) {
+    public IssueStatsDTO getIssueStats(@NonNull Long repoId) {
         List<Issue> allIssues = issueRepo.findByRepoIdAndIsPullRequest(repoId, false);
         List<Issue> allPRs = issueRepo.findByRepoIdAndIsPullRequest(repoId, true);
 
@@ -87,7 +85,7 @@ public class IssueService {
                 .build();
     }
 
-    private Repository getRepo(Long repoId) {
+    private Repository getRepo(@NonNull Long repoId) {
         return repoRepo.findById(repoId)
                 .orElseThrow(() -> new RuntimeException("Repository not found with id: " + repoId));
     }

@@ -113,7 +113,6 @@ public class DataProcessor {
         return ((Number) val).intValue();
     }
 
-    @SuppressWarnings("unchecked")
     private Map<String, Object> map(Map<String, Object> map, String key) {
         Object val = map == null ? null : map.get(key);
         return val instanceof Map ? (Map<String, Object>) val : null;
