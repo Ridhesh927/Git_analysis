@@ -77,7 +77,13 @@ public class GitHubAPIClient {
 
     @SuppressWarnings("unchecked")
     public Map<String, Long> getLanguages(String owner, String repo) {
-        return get("/repos/" + owner + "/" + repo + "/languages", Map.class);
+        Map<String, Object> rawMap = get("/repos/" + owner + "/" + repo + "/languages", Map.class);
+        if (rawMap == null) return null;
+        Map<String, Long> result = new java.util.LinkedHashMap<>();
+        for (Map.Entry<String, Object> entry : rawMap.entrySet()) {
+            result.put(entry.getKey(), ((Number) entry.getValue()).longValue());
+        }
+        return result;
     }
 
     @SuppressWarnings("unchecked")

@@ -1,5 +1,5 @@
-// API base URL — Vite exposes env vars prefixed with VITE_
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+// API base URL — Vite proxy will forward this to the backend
+export const API_BASE_URL = '/api';
 
 export const PAGINATION = {
   DEFAULT_PAGE_SIZE: 20,
