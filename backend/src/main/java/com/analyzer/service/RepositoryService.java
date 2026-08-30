@@ -26,6 +26,11 @@ public class RepositoryService {
      */
     public RepoStatsDTO searchRepository(String owner, String name) {
         Repository repo = githubAPIService.fetchAndSaveRepository(owner, name);
+        
+        // Fetch all data immediately so it's ready in the DB for the dashboard
+        githubAPIService.fetchAndSaveContributors(owner, name, repo.getId());
+        githubAPIService.fetchAndSaveIssues(owner, name, repo.getId());
+        
         Map<String, Long> languages = githubAPIService.fetchLanguages(owner, name);
         return toDTO(repo, languages);
     }

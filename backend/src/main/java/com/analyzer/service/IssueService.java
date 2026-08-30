@@ -30,7 +30,6 @@ public class IssueService {
      */
     public List<Issue> getIssues(@NonNull Long repoId, String state) {
         Repository repo = getRepo(repoId);
-        githubAPIService.fetchAndSaveIssues(repo.getOwner(), repo.getName(), repoId);
         if (state != null && !state.isBlank()) {
             return issueRepo.findByRepoIdAndState(repoId, state);
         }
@@ -42,7 +41,6 @@ public class IssueService {
      */
     public List<Issue> getPullRequests(@NonNull Long repoId, String state) {
         Repository repo = getRepo(repoId);
-        githubAPIService.fetchAndSaveIssues(repo.getOwner(), repo.getName(), repoId);
         List<Issue> prs = issueRepo.findByRepoIdAndIsPullRequest(repoId, true);
         if (state != null && !state.isBlank()) {
             return prs.stream().filter(pr -> pr.getState().equals(state)).toList();

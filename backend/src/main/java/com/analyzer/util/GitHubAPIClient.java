@@ -47,6 +47,12 @@ public class GitHubAPIClient {
         } catch (HttpClientErrorException.Forbidden e) {
             log.error("GitHub API rate limit or forbidden for {}: {}", url, e.getMessage());
             throw new RuntimeException("GitHub API rate limit exceeded. Please add a GITHUB_TOKEN in .env", e);
+        } catch (HttpClientErrorException.UnprocessableEntity e) {
+            log.warn("GitHub API 422 Unprocessable Entity for {} (usually repo too large for stats): {}", url, e.getMessage());
+            return null;
+        } catch (org.springframework.http.converter.HttpMessageConversionException e) {
+            log.warn("GitHub API conversion error for {} (usually empty 202 response or rate limit object): {}", url, e.getMessage());
+            return null;
         } catch (Exception e) {
             log.error("GitHub API error for {}: {}", url, e.getMessage());
             throw new RuntimeException("GitHub API request failed: " + e.getMessage(), e);

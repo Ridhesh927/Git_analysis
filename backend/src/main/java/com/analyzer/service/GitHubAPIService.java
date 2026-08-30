@@ -61,7 +61,7 @@ public class GitHubAPIService {
         List<Issue> all = new ArrayList<>();
         for (String state : List.of("open", "closed")) {
             int page = 1;
-            while (true) {
+            while (page <= 2) { // Limit to 2 pages (max 200 issues per state) to speed up analysis
                 Object[] raw = client.getIssues(owner, repo, state, page);
                 if (raw == null || raw.length == 0) break;
                 for (Object obj : raw) {
@@ -74,10 +74,7 @@ public class GitHubAPIService {
             }
         }
         log.info("Saving {} issues for repoId={}", all.size(), repoId);
-        // Delete old, save fresh
-        List<Issue> existing = issueRepo.findByRepoId(repoId);
-        List<Issue> toDelete = (existing != null) ? existing : Collections.emptyList();
-        issueRepo.deleteAll(new java.util.ArrayList<>(toDelete));
+        issueRepo.deleteByRepoId(repoId);
         return issueRepo.saveAll(all);
     }
 

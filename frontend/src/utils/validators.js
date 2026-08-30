@@ -30,7 +30,7 @@ export const parseGitHubUrl = (url) => {
     const { hostname, pathname } = new URL(url);
     if (!hostname.includes('github.com')) return null;
     const parts = pathname.replace(/^\//, '').split('/');
-    if (parts.length >= 2) return { owner: parts[0], repo: parts[1].replace('.git', '') };
+    if (parts.length >= 2) return { valid: true, owner: parts[0], repo: parts[1].replace('.git', ''), error: null };
   } catch { /* not a URL */ }
   return null;
 };

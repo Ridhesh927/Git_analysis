@@ -29,11 +29,15 @@ export default function Dashboard() {
       setLoading(true);
       setError('');
       try {
-        const [analyticsData, issuesData, prsData] = await Promise.all([
-          getFullAnalytics(repoId),
+        // Fetch analytics first (this triggers backend API fetches)
+        const analyticsData = await getFullAnalytics(repoId);
+        
+        // Then fetch issues and PRs (these will now just read instantly from the DB)
+        const [issuesData, prsData] = await Promise.all([
           getIssues(repoId),
           getPullRequests(repoId),
         ]);
+        
         setAnalytics(analyticsData);
         setIssues(issuesData);
         setPrs(prsData);

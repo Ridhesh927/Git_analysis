@@ -37,9 +37,6 @@ public class AnalyticsService {
         Repository repo = repoRepo.findById(repoId)
                 .orElseThrow(() -> new RuntimeException("Repository not found: " + repoId));
 
-        // Refresh contributors
-        githubAPIService.fetchAndSaveContributors(repo.getOwner(), repo.getName(), repoId);
-
         var repoStats = repositoryService.getById(repoId);
         var issueStats = issueService.getIssueStats(repoId);
         var contributors = getTopContributors(repoId, 10);
