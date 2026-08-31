@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Repository
 public interface IssueRepository extends JpaRepository<Issue, Long> {
     List<Issue> findByRepoIdAndIsPullRequest(Long repoId, Boolean isPullRequest);
     List<Issue> findByRepoIdAndState(Long repoId, String state);

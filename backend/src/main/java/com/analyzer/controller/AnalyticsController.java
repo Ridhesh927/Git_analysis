@@ -6,6 +6,7 @@ import com.analyzer.dto.IssueStatsDTO;
 import com.analyzer.service.AnalyticsService;
 import com.analyzer.service.IssueService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class AnalyticsController {
      * Full analytics bundle (repo + issues + contributors + languages + timeline).
      */
     @GetMapping("/full")
-    public ResponseEntity<AnalyticsResponseDTO> getFullAnalytics(@RequestParam("repo_id") Long repoId) {
+    public ResponseEntity<AnalyticsResponseDTO> getFullAnalytics(@RequestParam("repo_id") @NonNull Long repoId) {
         return ResponseEntity.ok(analyticsService.getFullAnalytics(repoId));
     }
 
@@ -37,7 +38,7 @@ public class AnalyticsController {
      * GET /api/analytics/contributors?repo_id=1
      */
     @GetMapping("/contributors")
-    public ResponseEntity<List<ContributorDTO>> getContributors(@RequestParam("repo_id") Long repoId) {
+    public ResponseEntity<List<ContributorDTO>> getContributors(@RequestParam("repo_id") @NonNull Long repoId) {
         return ResponseEntity.ok(analyticsService.getTopContributors(repoId, 20));
     }
 
@@ -46,7 +47,7 @@ public class AnalyticsController {
      */
     @GetMapping("/pr-trends")
     public ResponseEntity<List<Map<String, Object>>> getPRTrends(
-            @RequestParam("repo_id") Long repoId,
+            @RequestParam("repo_id") @NonNull Long repoId,
             @RequestParam(defaultValue = "30") int days) {
         return ResponseEntity.ok(analyticsService.getPRTrends(repoId, days));
     }
@@ -55,7 +56,7 @@ public class AnalyticsController {
      * GET /api/analytics/issue-stats?repo_id=1
      */
     @GetMapping("/issue-stats")
-    public ResponseEntity<IssueStatsDTO> getIssueStats(@RequestParam("repo_id") Long repoId) {
+    public ResponseEntity<IssueStatsDTO> getIssueStats(@RequestParam("repo_id") @NonNull Long repoId) {
         return ResponseEntity.ok(issueService.getIssueStats(repoId));
     }
 

@@ -16,20 +16,16 @@ public class IssueService {
 
     private final IssueRepository issueRepo;
     private final RepositoryRepository repoRepo;
-    private final GitHubAPIService githubAPIService;
-
-    public IssueService(IssueRepository issueRepo, RepositoryRepository repoRepo,
-                        GitHubAPIService githubAPIService) {
+    public IssueService(IssueRepository issueRepo, RepositoryRepository repoRepo) {
         this.issueRepo = issueRepo;
         this.repoRepo = repoRepo;
-        this.githubAPIService = githubAPIService;
     }
 
     /**
      * Fetch + refresh issues for a repository, return filtered list.
      */
     public List<Issue> getIssues(@NonNull Long repoId, String state) {
-        Repository repo = getRepo(repoId);
+        getRepo(repoId); // ensure repo exists
         if (state != null && !state.isBlank()) {
             return issueRepo.findByRepoIdAndState(repoId, state);
         }
@@ -40,7 +36,7 @@ public class IssueService {
      * Fetch + refresh PRs for a repository.
      */
     public List<Issue> getPullRequests(@NonNull Long repoId, String state) {
-        Repository repo = getRepo(repoId);
+        getRepo(repoId); // ensure repo exists
         List<Issue> prs = issueRepo.findByRepoIdAndIsPullRequest(repoId, true);
         if (state != null && !state.isBlank()) {
             return prs.stream().filter(pr -> pr.getState().equals(state)).toList();

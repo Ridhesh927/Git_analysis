@@ -26,6 +26,7 @@ public class GitHubAPIClient {
         this.restTemplate = new RestTemplate();
     }
 
+    @SuppressWarnings("null")
     private HttpHeaders buildHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.parseMediaType("application/vnd.github.v3+json")));
@@ -35,6 +36,7 @@ public class GitHubAPIClient {
         return headers;
     }
 
+    @SuppressWarnings("null")
     public <T> T get(String path, Class<T> responseType) {
         String url = BASE_URL + path;
         HttpEntity<Void> entity = new HttpEntity<>(buildHeaders());
@@ -64,19 +66,16 @@ public class GitHubAPIClient {
         return get("/repos/" + owner + "/" + repo, Map.class);
     }
 
-    @SuppressWarnings("unchecked")
     public Object[] getIssues(String owner, String repo, String state, int page) {
         String path = String.format("/repos/%s/%s/issues?state=%s&per_page=100&page=%d", owner, repo, state, page);
         return get(path, Object[].class);
     }
 
-    @SuppressWarnings("unchecked")
     public Object[] getPullRequests(String owner, String repo, String state, int page) {
         String path = String.format("/repos/%s/%s/pulls?state=%s&per_page=100&page=%d", owner, repo, state, page);
         return get(path, Object[].class);
     }
 
-    @SuppressWarnings("unchecked")
     public Object[] getContributors(String owner, String repo) {
         return get("/repos/" + owner + "/" + repo + "/contributors?per_page=100", Object[].class);
     }
@@ -92,7 +91,6 @@ public class GitHubAPIClient {
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     public Object[] getCodeFrequency(String owner, String repo) {
         return get("/repos/" + owner + "/" + repo + "/stats/code_frequency", Object[].class);
     }

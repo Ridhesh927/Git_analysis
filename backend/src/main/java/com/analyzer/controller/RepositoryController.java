@@ -3,6 +3,7 @@ package com.analyzer.controller;
 import com.analyzer.model.Issue;
 import com.analyzer.service.IssueService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public class RepositoryController {
      */
     @GetMapping("/issues")
     public ResponseEntity<List<Issue>> getIssues(
-            @RequestParam("repo_id") Long repoId,
+            @RequestParam("repo_id") @NonNull Long repoId,
             @RequestParam(required = false) String status) {
         return ResponseEntity.ok(issueService.getIssues(repoId, status));
     }
@@ -33,7 +34,7 @@ public class RepositoryController {
      */
     @GetMapping("/prs")
     public ResponseEntity<List<Issue>> getPRs(
-            @RequestParam("repo_id") Long repoId,
+            @RequestParam("repo_id") @NonNull Long repoId,
             @RequestParam(required = false) String status) {
         return ResponseEntity.ok(issueService.getPullRequests(repoId, status));
     }

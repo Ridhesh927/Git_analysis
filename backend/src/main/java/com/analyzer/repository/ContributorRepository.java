@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Repository
 public interface ContributorRepository extends JpaRepository<Contributor, Long> {
     List<Contributor> findByRepoIdOrderByContributionsDesc(Long repoId);
 
