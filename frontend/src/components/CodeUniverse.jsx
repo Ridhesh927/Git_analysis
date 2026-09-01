@@ -12,7 +12,7 @@ function Nodes({ viewType, count = 500 }) {
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
     
-    const colorOptions = [new THREE.Color('#c084fc'), new THREE.Color('#38bdf8'), new THREE.Color('#818cf8')];
+    const colorOptions = [new THREE.Color('#0ea5e9'), new THREE.Color('#38bdf8'), new THREE.Color('#818cf8'), new THREE.Color('#2dd4bf')];
 
     for (let i = 0; i < count; i++) {
       if (viewType === 'time-galaxy') {
@@ -61,9 +61,9 @@ export default function CodeUniverse({ data }) {
 
   return (
     <>
-      <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -1, background: '#050510' }}>
+      <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -1, background: '#020617' }}>
         <Canvas camera={{ position: [0, 10, 30], fov: 60 }}>
-        <color attach="background" args={['#050510']} />
+        <color attach="background" args={['#020617']} />
         <ambientLight intensity={0.5} />
         <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
         <Nodes key={viewType} viewType={viewType} count={800} />
@@ -76,8 +76,8 @@ export default function CodeUniverse({ data }) {
         <button 
           onClick={() => setViewType('time-galaxy')}
           style={{
-            background: viewType === 'time-galaxy' ? 'rgba(192, 132, 252, 0.3)' : 'rgba(255,255,255,0.1)',
-            border: '1px solid rgba(192, 132, 252, 0.5)',
+            background: viewType === 'time-galaxy' ? 'rgba(14, 165, 233, 0.3)' : 'rgba(255,255,255,0.1)',
+            border: '1px solid rgba(14, 165, 233, 0.5)',
             color: '#fff',
             padding: '8px 16px',
             borderRadius: '20px',
@@ -90,8 +90,8 @@ export default function CodeUniverse({ data }) {
         <button 
           onClick={() => setViewType('constellation')}
           style={{
-            background: viewType === 'constellation' ? 'rgba(192, 132, 252, 0.3)' : 'rgba(255,255,255,0.1)',
-            border: '1px solid rgba(192, 132, 252, 0.5)',
+            background: viewType === 'constellation' ? 'rgba(14, 165, 233, 0.3)' : 'rgba(255,255,255,0.1)',
+            border: '1px solid rgba(14, 165, 233, 0.5)',
             color: '#fff',
             padding: '8px 16px',
             borderRadius: '20px',

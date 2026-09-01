@@ -26,8 +26,9 @@ export default function SearchBar({ onSearch, loading }) {
   );
 
   return (
-    <form className="search-bar" onSubmit={handleSubmit}>
-      <div className="search-bar__input-wrap">
+    <div className="search-container" style={{ width: '100%', maxWidth: '640px', margin: '0 auto' }}>
+      <form className="search-bar" onSubmit={handleSubmit}>
+        <div className="search-bar__input-wrap">
         <Search size={16} className="search-bar__icon" />
         <input
           className="input search-bar__input"
@@ -50,12 +51,13 @@ export default function SearchBar({ onSearch, loading }) {
             <X size={15} />
           </button>
         )}
-        {error && <div className="search-bar__error">{error}</div>}
-        <div className="search-bar__hint">e.g. facebook/react &nbsp;·&nbsp; torvalds/linux</div>
-      </div>
-      <button className="btn btn-primary" type="submit" disabled={loading || !value.trim()} id="search-submit-btn">
-        {loading ? 'Searching…' : 'Analyze'}
-      </button>
-    </form>
+          {error && <div className="search-bar__error">{error}</div>}
+        </div>
+        <button className="btn btn-primary search-btn" type="submit" disabled={loading || !value.trim()} id="search-submit-btn">
+          {loading ? 'Searching…' : 'Analyze'}
+        </button>
+      </form>
+      <div className="search-bar__hint" style={{ marginTop: '12px' }}>e.g. facebook/react &nbsp;·&nbsp; torvalds/linux</div>
+    </div>
   );
 }
