@@ -6,6 +6,7 @@ import MetricsDisplay from '../components/MetricsDisplay';
 import IssueTracker from '../components/IssueTracker';
 import ContributorChart from '../components/ContributorChart';
 import PullRequestBoard from '../components/PullRequestBoard';
+import GlassCard from '../components/GlassCard';
 import { getFullAnalytics, getIssues, getPullRequests } from '../services/githubService';
 import { formatNumber, formatDate, languagesToChartData } from '../utils/formatters';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
@@ -92,7 +93,7 @@ export default function Dashboard() {
       <div className="grid-2" style={{ marginBottom: 'var(--space-5)' }}>
 
         {/* Language breakdown pie */}
-        <div className="card chart-card">
+        <GlassCard className="chart-card">
           <h3 className="section-title"><Globe size={16} /> Languages</h3>
           {langData.length ? (
             <>
@@ -120,26 +121,26 @@ export default function Dashboard() {
               </div>
             </>
           ) : <div className="empty-state"><p>No language data</p></div>}
-        </div>
+        </GlassCard>
 
         {/* Contributors */}
-        <div className="card chart-card">
+        <GlassCard className="chart-card">
           <h3 className="section-title">Top Contributors</h3>
           <ContributorChart contributors={topContributors} />
-        </div>
+        </GlassCard>
       </div>
 
       {/* ── Issues ─────────────────────────────────────────── */}
-      <div className="card" style={{ marginBottom: 'var(--space-5)' }}>
+      <GlassCard style={{ marginBottom: 'var(--space-5)' }}>
         <h3 className="section-title">Issues</h3>
         <IssueTracker issues={issues} />
-      </div>
+      </GlassCard>
 
       {/* ── Pull Requests ───────────────────────────────────── */}
-      <div className="card">
+      <GlassCard>
         <h3 className="section-title">Pull Requests</h3>
         <PullRequestBoard pullRequests={prs} />
-      </div>
+      </GlassCard>
     </div>
   );
 }

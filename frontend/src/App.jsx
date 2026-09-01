@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import CodeUniverse from './components/CodeUniverse';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import RepositoryDetail from './pages/RepositoryDetail';
@@ -11,6 +12,7 @@ import './styles/dashboard.css';
 export default function App() {
   return (
     <BrowserRouter>
+      <CodeUniverse />
       <Navbar />
       <Routes>
         <Route path="/"                    element={<Home />} />
