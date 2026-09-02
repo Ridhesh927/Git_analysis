@@ -72,6 +72,12 @@ public class RepositoryService {
                 .toList();
     }
 
+    public List<Map<String, Object>> getCommits(long id, int limit) {
+        Repository repo = repoRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Repository not found with id: " + id));
+        return githubAPIService.fetchCommits(repo.getOwner(), repo.getName(), limit);
+    }
+
     private RepoStatsDTO toDTO(Repository r, Map<String, Long> languages) {
         return RepoStatsDTO.builder()
                 .id(r.getId())

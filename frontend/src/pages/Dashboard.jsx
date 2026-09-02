@@ -4,7 +4,7 @@ import { GitBranch, Star, GitFork, Eye, ExternalLink, Globe, Calendar } from 'lu
 
 import MetricsDisplay from '../components/MetricsDisplay';
 import IssueTracker from '../components/IssueTracker';
-import ContributorChart from '../components/ContributorChart';
+import RPGCard from '../components/RPGCard';
 import PullRequestBoard from '../components/PullRequestBoard';
 import GlassCard from '../components/GlassCard';
 import { getFullAnalytics, getIssues, getPullRequests } from '../services/githubService';
@@ -25,6 +25,8 @@ export default function Dashboard() {
   const [loading, setLoading]     = useState(true);
   const [error, setError]         = useState('');
 
+  const [commits, setCommits]     = useState([]);
+
   useEffect(() => {
     (async () => {
       setLoading(true);
@@ -34,14 +36,22 @@ export default function Dashboard() {
         const analyticsData = await getFullAnalytics(repoId);
         
         // Then fetch issues and PRs (these will now just read instantly from the DB)
-        const [issuesData, prsData] = await Promise.all([
+        // Also fetch the real commit data for 3D Universe
+        const { getCommits } = await import('../services/githubService');
+        const [issuesData, prsData, commitsData] = await Promise.all([
           getIssues(repoId),
           getPullRequests(repoId),
+          getCommits(repoId, 30) // limit to 30 as per plan
         ]);
         
         setAnalytics(analyticsData);
         setIssues(issuesData);
         setPrs(prsData);
+        setCommits(commitsData);
+        
+        // Dispatch event for CodeUniverse
+        window.dispatchEvent(new CustomEvent('updateCommits', { detail: commitsData }));
+        
       } catch (err) {
         setError(err.message || 'Failed to load analytics.');
       } finally {
@@ -122,13 +132,29 @@ export default function Dashboard() {
             </>
           ) : <div className="empty-state"><p>No language data</p></div>}
         </GlassCard>
-
-        {/* Contributors */}
-        <GlassCard className="chart-card">
-          <h3 className="section-title">Top Contributors</h3>
-          <ContributorChart contributors={topContributors} />
-        </GlassCard>
       </div>
+
+      {/* ── RPG Stats (Top Contributors) ───────────────────── */}
+      <GlassCard style={{ marginBottom: 'var(--space-5)' }}>
+        <h3 className="section-title">Hero Roster (Top Contributors)</h3>
+        {topContributors && topContributors.length > 0 ? (
+          <div style={{ 
+            display: 'flex', 
+            gap: '24px', 
+            overflowX: 'auto', 
+            padding: '16px 8px',
+            scrollSnapType: 'x mandatory' 
+          }}>
+            {topContributors.map(c => (
+              <div key={c.login} style={{ scrollSnapAlign: 'start', flexShrink: 0 }}>
+                <RPGCard contributor={c} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="empty-state"><p>No contributors found</p></div>
+        )}
+      </GlassCard>
 
       {/* ── Issues ─────────────────────────────────────────── */}
       <GlassCard style={{ marginBottom: 'var(--space-5)' }}>

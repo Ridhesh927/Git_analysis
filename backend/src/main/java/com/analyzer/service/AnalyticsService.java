@@ -58,7 +58,9 @@ public class AnalyticsService {
      * Top N contributors by commit count.
      */
     public List<ContributorDTO> getTopContributors(@NonNull Long repoId, int limit) {
+        Set<String> seenLogins = new HashSet<>();
         return contributorRepo.findByRepoIdOrderByContributionsDesc(repoId).stream()
+                .filter(c -> seenLogins.add(c.getLogin())) // Keep only the first occurrence of each login
                 .limit(limit)
                 .map(c -> ContributorDTO.builder()
                         .login(c.getLogin())

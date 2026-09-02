@@ -22,6 +22,10 @@ export const getLanguages = (id) =>
 export const trackRepository = (owner, repo) =>
   api.post('/repos/track', { owner, repo }).then((r) => r.data);
 
+/** Get commits for a repo */
+export const getCommits = (id, limit = 30) =>
+  api.get(`/repos/${id}/commits`, { params: { limit } }).then((r) => r.data);
+
 // ── Issues & PRs ────────────────────────────────────────────────────────────
 
 /** Get issues for a repo (optionally filtered by status) */

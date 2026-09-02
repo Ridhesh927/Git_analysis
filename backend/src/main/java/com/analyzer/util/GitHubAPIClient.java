@@ -50,10 +50,12 @@ public class GitHubAPIClient {
             log.error("GitHub API rate limit or forbidden for {}: {}", url, e.getMessage());
             throw new RuntimeException("GitHub API rate limit exceeded. Please add a GITHUB_TOKEN in .env", e);
         } catch (HttpClientErrorException.UnprocessableEntity e) {
-            log.warn("GitHub API 422 Unprocessable Entity for {} (usually repo too large for stats): {}", url, e.getMessage());
+            log.warn("GitHub API 422 Unprocessable Entity for {} (usually repo too large for stats): {}", url,
+                    e.getMessage());
             return null;
         } catch (org.springframework.http.converter.HttpMessageConversionException e) {
-            log.warn("GitHub API conversion error for {} (usually empty 202 response or rate limit object): {}", url, e.getMessage());
+            log.warn("GitHub API conversion error for {} (usually empty 202 response or rate limit object): {}", url,
+                    e.getMessage());
             return null;
         } catch (Exception e) {
             log.error("GitHub API error for {}: {}", url, e.getMessage());
@@ -83,7 +85,8 @@ public class GitHubAPIClient {
     @SuppressWarnings("unchecked")
     public Map<String, Long> getLanguages(String owner, String repo) {
         Map<String, Object> rawMap = get("/repos/" + owner + "/" + repo + "/languages", Map.class);
-        if (rawMap == null) return null;
+        if (rawMap == null)
+            return null;
         Map<String, Long> result = new java.util.LinkedHashMap<>();
         for (Map.Entry<String, Object> entry : rawMap.entrySet()) {
             result.put(entry.getKey(), ((Number) entry.getValue()).longValue());
@@ -93,5 +96,14 @@ public class GitHubAPIClient {
 
     public Object[] getCodeFrequency(String owner, String repo) {
         return get("/repos/" + owner + "/" + repo + "/stats/code_frequency", Object[].class);
+    }
+
+    public Object[] getCommits(String owner, String repo, int limit) {
+        return get("/repos/" + owner + "/" + repo + "/commits?per_page=" + limit, Object[].class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> getCommitDetails(String owner, String repo, String sha) {
+        return get("/repos/" + owner + "/" + repo + "/commits/" + sha, Map.class);
     }
 }

@@ -64,4 +64,15 @@ public class GitHubController {
         String repo = body.get("repo");
         return ResponseEntity.ok(repositoryService.trackRepository(owner, repo));
     }
+
+    /**
+     * GET /api/repos/{id}/commits
+     * Fetch recent commits with details
+     */
+    @GetMapping("/{id}/commits")
+    public ResponseEntity<List<Map<String, Object>>> getCommits(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "30") int limit) {
+        return ResponseEntity.ok(repositoryService.getCommits(id, limit));
+    }
 }

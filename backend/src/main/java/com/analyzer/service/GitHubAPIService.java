@@ -117,4 +117,54 @@ public class GitHubAPIService {
         log.info("Fetching code frequency for {}/{}", owner, repo);
         return client.getCodeFrequency(owner, repo);
     }
+
+    /**
+     * Fetch recent commits with exact stats, limited to avoid rate limits.
+     */
+    public List<Map<String, Object>> fetchCommits(String owner, String repo, int limit) {
+        log.info("Fetching {} commits for {}/{}", limit, owner, repo);
+        Object[] rawCommits = client.getCommits(owner, repo, limit);
+        if (rawCommits == null) return Collections.emptyList();
+        
+        List<Map<String, Object>> result = new ArrayList<>();
+        Map<String, Long> languages = fetchLanguages(owner, repo);
+        String primaryLanguage = "Unknown";
+        if (languages != null && !languages.isEmpty()) {
+            primaryLanguage = languages.keySet().iterator().next();
+        }
+
+        for (Object obj : rawCommits) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> commitNode = (Map<String, Object>) obj;
+            String sha = (String) commitNode.get("sha");
+            
+            @SuppressWarnings("unchecked")
+            Map<String, Object> commitObj = (Map<String, Object>) commitNode.get("commit");
+            String message = commitObj != null ? (String) commitObj.get("message") : "";
+            
+            @SuppressWarnings("unchecked")
+            Map<String, Object> authorObj = commitObj != null ? (Map<String, Object>) commitObj.get("author") : null;
+            String author = authorObj != null ? (String) authorObj.get("name") : "Unknown";
+            
+            Map<String, Object> details = client.getCommitDetails(owner, repo, sha);
+            int size = 10;
+            if (details != null) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> stats = (Map<String, Object>) details.get("stats");
+                if (stats != null && stats.get("total") != null) {
+                    size = ((Number) stats.get("total")).intValue();
+                }
+            }
+            
+            Map<String, Object> formatted = new HashMap<>();
+            formatted.put("sha", sha);
+            formatted.put("message", message);
+            formatted.put("author", author);
+            formatted.put("size", size);
+            formatted.put("language", primaryLanguage);
+            
+            result.add(formatted);
+        }
+        return result;
+    }
 }
