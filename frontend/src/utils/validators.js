@@ -28,7 +28,9 @@ export const parseRepoInput = (value) => {
 export const parseGitHubUrl = (url) => {
   try {
     const { hostname, pathname } = new URL(url);
-    if (!hostname.includes('github.com')) return null;
+    const normalizedHost = hostname.toLowerCase().replace(/\.$/, '');
+    const allowedHosts = new Set(['github.com', 'www.github.com']);
+    if (!allowedHosts.has(normalizedHost)) return null;
     const parts = pathname.replace(/^\//, '').split('/');
     if (parts.length >= 2) return { valid: true, owner: parts[0], repo: parts[1].replace('.git', ''), error: null };
   } catch { /* not a URL */ }
