@@ -7,6 +7,7 @@ import IssueTracker from '../components/IssueTracker';
 import RPGCard from '../components/RPGCard';
 import PullRequestBoard from '../components/PullRequestBoard';
 import GlassCard from '../components/GlassCard';
+import RepoRoast from '../components/RepoRoast';
 import { getFullAnalytics, getIssues, getPullRequests } from '../services/githubService';
 import { formatNumber, formatDate, languagesToChartData } from '../utils/formatters';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
@@ -64,7 +65,7 @@ export default function Dashboard() {
   if (error)   return <div className="container page-wrapper"><div className="error-box">{error}</div></div>;
   if (!analytics) return null;
 
-  const { repoStats: repo, issueStats, topContributors, languageBreakdown } = analytics;
+  const { repoStats: repo, issueStats, topContributors, languageBreakdown, repoRoast } = analytics;
   const langData = languagesToChartData(languageBreakdown);
 
   return (
@@ -95,6 +96,8 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      <RepoRoast roast={repoRoast} />
 
       {/* ── Metric tiles ───────────────────────────────────── */}
       <MetricsDisplay repo={repo} issueStats={issueStats} />

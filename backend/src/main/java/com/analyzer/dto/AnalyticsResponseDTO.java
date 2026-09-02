@@ -18,4 +18,5 @@ public class AnalyticsResponseDTO {
     private Map<String, Long> languageBreakdown;
     private List<Map<String, Object>> activityTimeline;
     private List<Map<String, Object>> prTrends;
+    private String repoRoast;
 }

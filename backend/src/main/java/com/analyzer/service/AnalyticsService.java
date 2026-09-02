@@ -43,6 +43,7 @@ public class AnalyticsService {
         var languages = githubAPIService.fetchLanguages(repo.getOwner(), repo.getName());
         var prTrends = getPRTrends(repoId, 30);
         var activityTimeline = getActivityTimeline(repo.getOwner(), repo.getName());
+        var repoRoast = generateRepoRoast(issueStats);
 
         return AnalyticsResponseDTO.builder()
                 .repoStats(repoStats)
@@ -51,7 +52,24 @@ public class AnalyticsService {
                 .languageBreakdown(languages)
                 .prTrends(prTrends)
                 .activityTimeline(activityTimeline)
+                .repoRoast(repoRoast)
                 .build();
+    }
+
+    private String generateRepoRoast(com.analyzer.dto.IssueStatsDTO issueStats) {
+        if (issueStats.getBurnoutMeter() != null && issueStats.getBurnoutMeter() > 20.0) {
+            return String.format("Are you okay? %.1f%% of your PRs are merged between midnight and 5 AM. Get some sleep, vampires.", issueStats.getBurnoutMeter());
+        }
+        if (issueStats.getTechDebtRatio() != null && issueStats.getTechDebtRatio() > 2.0) {
+            return "For every feature you ship, you create multiple bugs. The tech debt is calling, and it's coming from inside the house.";
+        }
+        if (issueStats.getHealthScore() != null && issueStats.getHealthScore() < 40.0) {
+            return "The community vibe is looking a bit spicy. Yikes. Time for a team retreat.";
+        }
+        if (issueStats.getOpenIssues() != null && issueStats.getOpenIssues() > 500) {
+            return String.format("You have %d open issues. At this point, it's not a backlog, it's a black hole.", issueStats.getOpenIssues());
+        }
+        return "Wow, an actually well-maintained repo with low tech debt and healthy sleep schedules. The 10x engineers are real!";
     }
 
     /**
