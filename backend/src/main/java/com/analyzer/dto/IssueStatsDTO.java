@@ -18,4 +18,11 @@ public class IssueStatsDTO {
     private Long openPRs;
     private Long mergedPRs;
     private Double avgMergeTimeDays;
+
+    // Advanced Community Metrics
+    private Double healthScore;
+    private Double burnoutMeter;
+    private Long bugCount;
+    private Long enhancementCount;
+    private Double techDebtRatio;
 }

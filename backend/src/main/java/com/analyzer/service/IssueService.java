@@ -67,6 +67,65 @@ public class IssueService {
                 .mapToLong(p -> Duration.between(p.getCreatedAt(), p.getClosedAt()).toDays())
                 .average().orElse(0.0);
 
+        // Advanced Metrics Calculation
+        long bugCount = 0;
+        long enhancementCount = 0;
+        
+        double totalSentimentScore = 0;
+        int sentimentCount = 0;
+        
+        List<String> positiveWords = List.of("thanks", "great", "awesome", "lgtm", "appreciate", "good", "excellent", "fix");
+        List<String> negativeWords = List.of("broken", "terrible", "frustrating", "annoying", "hate", "worst", "shit", "stupid", "critical", "fail", "bug");
+
+        for (Issue issue : allIssues) {
+            if (issue.getLabels() != null) {
+                String labels = issue.getLabels().toLowerCase();
+                if (labels.contains("bug") || labels.contains("defect") || labels.contains("error")) {
+                    bugCount++;
+                }
+                if (labels.contains("enhancement") || labels.contains("feature") || labels.contains("improvement")) {
+                    enhancementCount++;
+                }
+            }
+            
+            String text = (issue.getTitle() + " " + (issue.getBody() != null ? issue.getBody() : "")).toLowerCase();
+            int pos = 0, neg = 0;
+            for (String pw : positiveWords) if (text.contains(pw)) pos++;
+            for (String nw : negativeWords) if (text.contains(nw)) neg++;
+            
+            if (pos > 0 || neg > 0) {
+                totalSentimentScore += (double) pos / (pos + neg) * 100;
+                sentimentCount++;
+            }
+        }
+
+        for (Issue pr : allPRs) {
+            String text = (pr.getTitle() + " " + (pr.getBody() != null ? pr.getBody() : "")).toLowerCase();
+            int pos = 0, neg = 0;
+            for (String pw : positiveWords) if (text.contains(pw)) pos++;
+            for (String nw : negativeWords) if (text.contains(nw)) neg++;
+            
+            if (pos > 0 || neg > 0) {
+                totalSentimentScore += (double) pos / (pos + neg) * 100;
+                sentimentCount++;
+            }
+        }
+
+        double healthScore = sentimentCount > 0 ? totalSentimentScore / sentimentCount : 50.0;
+        double techDebtRatio = enhancementCount > 0 ? (double) bugCount / enhancementCount : bugCount;
+
+        long lateNightMerges = 0;
+        for (Issue pr : allPRs) {
+            if ("closed".equals(pr.getState()) && pr.getClosedAt() != null) {
+                int hour = pr.getClosedAt().getHour();
+                if (hour >= 0 && hour <= 5) {
+                    lateNightMerges++;
+                }
+            }
+        }
+        
+        double burnoutMeter = mergedPRs > 0 ? ((double) lateNightMerges / mergedPRs) * 100 : 0.0;
+
         return IssueStatsDTO.builder()
                 .totalIssues((long) allIssues.size())
                 .openIssues(openIssues)
@@ -76,6 +135,11 @@ public class IssueService {
                 .openPRs(openPRs)
                 .mergedPRs(mergedPRs)
                 .avgMergeTimeDays(avgPRMerge)
+                .healthScore(healthScore)
+                .burnoutMeter(burnoutMeter)
+                .bugCount(bugCount)
+                .enhancementCount(enhancementCount)
+                .techDebtRatio(techDebtRatio)
                 .build();
     }
 

@@ -1,4 +1,4 @@
-import { Star, GitFork, Eye, AlertCircle, GitMerge, Clock } from 'lucide-react';
+import { Star, GitFork, Eye, AlertCircle, GitMerge, Clock, HeartPulse, Flame, Bug } from 'lucide-react';
 import { formatNumber, formatDays } from '../utils/formatters';
 import '../styles/components.css';
 
@@ -9,6 +9,9 @@ const TILES = (repo, issueStats) => [
   { label: 'Open Issues',  value: formatNumber(issueStats?.openIssues),    icon: <AlertCircle size={18} />,    iconBg: 'rgba(239,68,68,.15)',  iconColor: 'var(--red)' },
   { label: 'Merged PRs',   value: formatNumber(issueStats?.mergedPRs),     icon: <GitMerge size={18} />,       iconBg: 'rgba(34,197,94,.15)',  iconColor: 'var(--green)' },
   { label: 'Avg PR Merge', value: formatDays(issueStats?.avgMergeTimeDays),icon: <Clock size={18} />,          iconBg: 'rgba(168,85,247,.15)', iconColor: 'var(--purple)' },
+  { label: 'Vibe Check (Health)',  value: `${Math.round(issueStats?.healthScore ?? 50)} / 100`, icon: <HeartPulse size={18} />, iconBg: 'rgba(236,72,153,.15)', iconColor: 'var(--pink)' },
+  { label: 'Burnout Meter', value: `${Math.round(issueStats?.burnoutMeter ?? 0)}% late-night PRs`, icon: <Flame size={18} />, iconBg: 'rgba(249,115,22,.15)', iconColor: 'var(--orange)' },
+  { label: 'Tech Debt (Bugs/Feat)', value: `${(issueStats?.techDebtRatio ?? 0).toFixed(1)}x`, icon: <Bug size={18} />, iconBg: 'rgba(16,185,129,.15)', iconColor: 'var(--emerald)' },
 ];
 
 export default function MetricsDisplay({ repo, issueStats }) {
