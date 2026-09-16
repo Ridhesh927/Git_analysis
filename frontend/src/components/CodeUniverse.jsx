@@ -176,7 +176,7 @@ export default function CodeUniverse({ data }) {
       </div>
       
       {/* Toggle View Overlay */}
-      <div style={{ position: 'fixed', bottom: '40px', left: '50%', transform: 'translateX(-50%)', zIndex: 10, display: 'flex', gap: '10px' }}>
+      <div style={{ position: 'fixed', bottom: '40px', left: '40px', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '10px' }}>
         <button 
           onClick={() => setViewType('time-galaxy')}
           style={{
