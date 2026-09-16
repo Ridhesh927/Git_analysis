@@ -106,4 +106,13 @@ public class GitHubAPIClient {
     public Map<String, Object> getCommitDetails(String owner, String repo, String sha) {
         return get("/repos/" + owner + "/" + repo + "/commits/" + sha, Map.class);
     }
+
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> getUser(String username) {
+        return get("/users/" + username, Map.class);
+    }
+
+    public Object[] getUserRepos(String username) {
+        return get("/users/" + username + "/repos?type=owner&sort=pushed&per_page=10", Object[].class);
+    }
 }

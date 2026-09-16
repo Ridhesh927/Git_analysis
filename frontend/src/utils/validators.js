@@ -24,6 +24,27 @@ export const parseRepoInput = (value) => {
   return { valid: true, owner, repo, error: null };
 };
 
+/**
+ * Validate a GitHub username.
+ * @param {string} value
+ * @returns {{ valid: boolean, username: string, error: string|null }}
+ */
+export const parseUserInput = (value) => {
+  const trimmed = (value ?? '').trim();
+  
+  if (!trimmed) {
+    return { valid: false, username: '', error: 'Username cannot be empty.' };
+  }
+
+  const ghNameRegex = /^[a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38}$/;
+
+  if (!ghNameRegex.test(trimmed)) {
+    return { valid: false, username: trimmed, error: 'Invalid GitHub username.' };
+  }
+
+  return { valid: true, username: trimmed, error: null };
+};
+
 /** Check if a string is a plausible GitHub URL and extract owner/repo */
 export const parseGitHubUrl = (url) => {
   try {

@@ -6,6 +6,10 @@ import api from './api';
 export const searchRepository = (username, repo) =>
   api.get('/repos/search', { params: { username, repo } }).then((r) => r.data);
 
+/** Search GitHub for a user. Returns UserStatsDTO */
+export const searchUser = (username) =>
+  api.get('/users/search', { params: { username } }).then((r) => r.data);
+
 /** List all tracked repositories */
 export const listRepositories = () =>
   api.get('/repos').then((r) => r.data);

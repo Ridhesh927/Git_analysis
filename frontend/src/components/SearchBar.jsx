@@ -1,32 +1,58 @@
 import { useState, useCallback } from 'react';
 import { Search, X } from 'lucide-react';
-import { parseRepoInput, parseGitHubUrl } from '../utils/validators';
+import { parseRepoInput, parseGitHubUrl, parseUserInput } from '../utils/validators';
 import '../styles/components.css';
 
 export default function SearchBar({ onSearch, loading }) {
   const [value, setValue] = useState('');
   const [error, setError] = useState('');
+  const [searchType, setSearchType] = useState('repo'); // 'repo' or 'user'
 
   const handleSubmit = useCallback(
     (e) => {
       e.preventDefault();
       setError('');
 
-      // Accept either "owner/repo" or a full GitHub URL
-      let parsed = parseGitHubUrl(value);
-      if (!parsed) parsed = parseRepoInput(value);
+      if (searchType === 'user') {
+        const parsed = parseUserInput(value);
+        if (!parsed.valid) {
+          setError(parsed.error);
+          return;
+        }
+        onSearch({ type: 'user', username: parsed.username });
+      } else {
+        // Accept either "owner/repo" or a full GitHub URL
+        let parsed = parseGitHubUrl(value);
+        if (!parsed) parsed = parseRepoInput(value);
 
-      if (!parsed.valid) {
-        setError(parsed.error);
-        return;
+        if (!parsed.valid) {
+          setError(parsed.error);
+          return;
+        }
+        onSearch({ type: 'repo', owner: parsed.owner, repo: parsed.repo });
       }
-      onSearch(parsed.owner, parsed.repo);
     },
-    [value, onSearch]
+    [value, searchType, onSearch]
   );
 
   return (
     <div className="search-container" style={{ width: '100%', maxWidth: '640px', margin: '0 auto' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginBottom: '16px' }}>
+        <button
+          className={`btn ${searchType === 'repo' ? 'btn-primary' : 'btn-secondary'}`}
+          onClick={() => { setSearchType('repo'); setError(''); }}
+          style={{ padding: '6px 16px', borderRadius: '20px', fontSize: '0.9rem' }}
+        >
+          Repository
+        </button>
+        <button
+          className={`btn ${searchType === 'user' ? 'btn-primary' : 'btn-secondary'}`}
+          onClick={() => { setSearchType('user'); setError(''); }}
+          style={{ padding: '6px 16px', borderRadius: '20px', fontSize: '0.9rem' }}
+        >
+          User
+        </button>
+      </div>
       <form className="search-bar" onSubmit={handleSubmit}>
         <div className="search-bar__input-wrap">
         <Search size={16} className="search-bar__icon" />
@@ -35,7 +61,7 @@ export default function SearchBar({ onSearch, loading }) {
           type="text"
           value={value}
           onChange={(e) => { setValue(e.target.value); setError(''); }}
-          placeholder="owner/repo  or  GitHub URL"
+          placeholder={searchType === 'repo' ? "owner/repo  or  GitHub URL" : "GitHub username"}
           autoComplete="off"
           spellCheck={false}
           id="repo-search-input"
@@ -57,7 +83,9 @@ export default function SearchBar({ onSearch, loading }) {
           {loading ? 'Searching…' : 'Analyze'}
         </button>
       </form>
-      <div className="search-bar__hint" style={{ marginTop: '12px' }}>e.g. facebook/react &nbsp;·&nbsp; torvalds/linux</div>
+      <div className="search-bar__hint" style={{ marginTop: '12px' }}>
+        {searchType === 'repo' ? 'e.g. facebook/react  ·  torvalds/linux' : 'e.g. torvalds  ·  gaearon'}
+      </div>
     </div>
   );
 }

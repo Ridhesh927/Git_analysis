@@ -3,6 +3,7 @@ import Navbar from './components/Navbar';
 import CodeUniverse from './components/CodeUniverse';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
+import UserDashboard from './pages/UserDashboard';
 import RepositoryDetail from './pages/RepositoryDetail';
 import Trends from './pages/Trends';
 import './styles/App.css';
@@ -17,6 +18,7 @@ export default function App() {
       <Routes>
         <Route path="/"                    element={<Home />} />
         <Route path="/dashboard/:id"       element={<Dashboard />} />
+        <Route path="/user/:username"      element={<UserDashboard />} />
         <Route path="/repository/:id"      element={<RepositoryDetail />} />
         <Route path="/trends"              element={<Trends />} />
       </Routes>

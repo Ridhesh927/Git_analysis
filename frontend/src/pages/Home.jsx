@@ -25,10 +25,16 @@ export default function Home() {
     listRepositories().then(setTracked).catch(() => {});
   }, []);
 
-  const handleSearch = useCallback(async (owner, repo) => {
+  const handleSearch = useCallback(async (searchParams) => {
     setLoading(true);
     setError('');
     try {
+      if (searchParams.type === 'user') {
+        navigate(`/user/${searchParams.username}`);
+        return;
+      }
+      
+      const { owner, repo } = searchParams;
       const data = await searchRepository(owner, repo);
       navigate(`/dashboard/${data.id}`);
     } catch (err) {
@@ -49,11 +55,11 @@ export default function Home() {
 
         {/* Title */}
         <h1 className="hero__title">
-          Understand any GitHub repo<br />in seconds
+          Understand any GitHub repo<br />or user in seconds
         </h1>
         <p className="hero__subtitle">
           Instantly analyse stars, issues, pull requests, contributors, and code trends
-          for any public GitHub repository.
+          for any public GitHub repository or user.
         </p>
 
         {/* Search */}
