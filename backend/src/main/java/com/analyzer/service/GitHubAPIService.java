@@ -6,6 +6,7 @@ import com.analyzer.util.DataProcessor;
 import com.analyzer.util.GitHubAPIClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -104,6 +105,7 @@ public class GitHubAPIService {
     /**
      * Fetch language breakdown (raw map, not persisted).
      */
+    @Cacheable(value = "languages", key = "#owner + '-' + #repo")
     public Map<String, Long> fetchLanguages(String owner, String repo) {
         log.info("Fetching languages for {}/{}", owner, repo);
         Map<String, Long> langs = client.getLanguages(owner, repo);
@@ -113,6 +115,7 @@ public class GitHubAPIService {
     /**
      * Fetch code frequency stats for trend charts.
      */
+    @Cacheable(value = "codeFrequency", key = "#owner + '-' + #repo")
     public Object[] fetchCodeFrequency(String owner, String repo) {
         log.info("Fetching code frequency for {}/{}", owner, repo);
         return client.getCodeFrequency(owner, repo);
@@ -121,6 +124,7 @@ public class GitHubAPIService {
     /**
      * Fetch recent commits with exact stats, limited to avoid rate limits.
      */
+    @Cacheable(value = "commits", key = "#owner + '-' + #repo + '-' + #limit")
     public List<Map<String, Object>> fetchCommits(String owner, String repo, int limit) {
         log.info("Fetching {} commits for {}/{}", limit, owner, repo);
         Object[] rawCommits = client.getCommits(owner, repo, limit);

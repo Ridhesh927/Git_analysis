@@ -61,7 +61,7 @@ export const languagesToChartData = (langMap) =>
 /** Convert activity timeline (epoch ms) → recharts-friendly format */
 export const timelineToChartData = (timeline) =>
   (timeline ?? []).map((t) => ({
-    date: format(new Date(t.timestamp), 'MMM yy'),
+    date: format(new Date(t.timestamp), 'MMM d'),
     additions: t.additions,
     deletions: t.deletions,
   }));

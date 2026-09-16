@@ -7,7 +7,7 @@ export default function Navbar() {
     <nav className="navbar">
       <div className="navbar__inner">
         <NavLink to="/" className="navbar__brand">
-          <GitBranch size={22} />
+          <img src="/logo.jpg" alt="GitHub Analyzer Logo" style={{ width: 28, height: 28, borderRadius: 6, objectFit: 'cover', border: '1px solid var(--border)' }} />
           GitHub<span>Analyzer</span>
         </NavLink>
         <div className="navbar__links">
