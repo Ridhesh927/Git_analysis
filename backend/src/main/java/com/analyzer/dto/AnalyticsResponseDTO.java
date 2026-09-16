@@ -17,6 +17,7 @@ public class AnalyticsResponseDTO {
     private List<ContributorDTO> topContributors;
     private Map<String, Long> languageBreakdown;
     private List<Map<String, Object>> activityTimeline;
+    private List<Map<String, Object>> contributorTimeline;
     private List<Map<String, Object>> prTrends;
     private String repoRoast;
 }

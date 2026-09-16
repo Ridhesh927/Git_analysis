@@ -43,6 +43,7 @@ public class AnalyticsService {
         var languages = githubAPIService.fetchLanguages(repo.getOwner(), repo.getName());
         var prTrends = getPRTrends(repoId, 30);
         var activityTimeline = getActivityTimeline(repo.getOwner(), repo.getName());
+        var contributorTimeline = getContributorTimeline(repo.getOwner(), repo.getName());
         var repoRoast = generateRepoRoast(issueStats);
 
         return AnalyticsResponseDTO.builder()
@@ -52,6 +53,7 @@ public class AnalyticsService {
                 .languageBreakdown(languages)
                 .prTrends(prTrends)
                 .activityTimeline(activityTimeline)
+                .contributorTimeline(contributorTimeline)
                 .repoRoast(repoRoast)
                 .build();
     }
@@ -116,6 +118,46 @@ public class AnalyticsService {
                     point.put("deletions", Math.abs(((Number) week.get(2)).longValue()));
                     timeline.add(point);
                 }
+            }
+        }
+        return timeline;
+    }
+
+    /**
+     * Contributor timeline from GitHub contributor stats.
+     */
+    public List<Map<String, Object>> getContributorTimeline(String owner, String repo) {
+        Object[] raw = githubAPIService.getContributorStats(owner, repo); // Need to expose this in GitHubAPIService? Wait!
+        if (raw == null) return Collections.emptyList();
+
+        List<Map<String, Object>> timeline = new ArrayList<>();
+        for (Object obj : raw) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> contributorNode = (Map<String, Object>) obj;
+            
+            @SuppressWarnings("unchecked")
+            Map<String, Object> authorObj = (Map<String, Object>) contributorNode.get("author");
+            String login = authorObj != null ? (String) authorObj.get("login") : "unknown";
+            
+            Object weeksObj = contributorNode.get("weeks");
+            if (weeksObj instanceof List<?> weeks) {
+                List<Map<String, Object>> userWeeks = new ArrayList<>();
+                for (Object w : weeks) {
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> weekNode = (Map<String, Object>) w;
+                    Map<String, Object> weekData = new LinkedHashMap<>();
+                    weekData.put("w", ((Number) weekNode.get("w")).longValue() * 1000L); // Convert to ms
+                    weekData.put("a", ((Number) weekNode.get("a")).longValue());
+                    weekData.put("d", ((Number) weekNode.get("d")).longValue());
+                    weekData.put("c", ((Number) weekNode.get("c")).longValue());
+                    userWeeks.add(weekData);
+                }
+                
+                Map<String, Object> userTimeline = new LinkedHashMap<>();
+                userTimeline.put("author", login);
+                userTimeline.put("total", contributorNode.get("total"));
+                userTimeline.put("weeks", userWeeks);
+                timeline.add(userTimeline);
             }
         }
         return timeline;

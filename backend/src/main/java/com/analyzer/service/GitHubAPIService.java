@@ -103,6 +103,14 @@ public class GitHubAPIService {
     }
 
     /**
+     * Fetch contributor weekly stats.
+     */
+    public Object[] getContributorStats(String owner, String repo) {
+        log.info("Fetching contributor stats for {}/{}", owner, repo);
+        return client.getContributorStats(owner, repo);
+    }
+
+    /**
      * Fetch language breakdown (raw map, not persisted).
      */
     @Cacheable(value = "languages", key = "#owner + '-' + #repo")

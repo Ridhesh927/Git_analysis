@@ -65,3 +65,107 @@ export const timelineToChartData = (timeline) =>
     additions: t.additions,
     deletions: t.deletions,
   }));
+
+/** Aggregate raw weekly timeline into different scales, and attach top contributors */
+export const aggregateTimeline = (timeline, scale, contributorTimeline = []) => {
+  if (!timeline || timeline.length === 0) return [];
+
+  // Helper to find contributors who contributed in a given time range [startMs, endMs]
+  const getTopContributors = (startMs, endMs) => {
+    const userTotals = {};
+    for (const user of contributorTimeline) {
+      let adds = 0;
+      let dels = 0;
+      for (const w of user.weeks || []) {
+        if (w.w >= startMs && w.w <= endMs) {
+          adds += w.a;
+          dels += w.d;
+        }
+      }
+      if (adds > 0 || dels > 0) {
+        userTotals[user.author] = { author: user.author, additions: adds, deletions: dels, total: adds + dels };
+      }
+    }
+    return Object.values(userTotals).sort((a, b) => b.total - a.total).slice(0, 3);
+  };
+
+  if (scale === 'weekly') {
+    return timeline.map(t => {
+      const endMs = t.timestamp + 7 * 24 * 60 * 60 * 1000 - 1;
+      return {
+        date: format(new Date(t.timestamp), 'MMM d, yyyy'),
+        additions: t.additions,
+        deletions: t.deletions,
+        rawDate: t.timestamp,
+        topContributors: getTopContributors(t.timestamp, endMs)
+      };
+    });
+  }
+
+  if (scale === 'daily') {
+    const daily = [];
+    for (const t of timeline) {
+      const addPerDay = Math.round(t.additions / 7);
+      const delPerDay = Math.round(t.deletions / 7);
+      const baseDate = new Date(t.timestamp);
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(baseDate);
+        d.setDate(d.getDate() + i);
+        if (d > new Date()) break;
+        
+        const startMs = d.getTime();
+        const endMs = startMs + 24 * 60 * 60 * 1000 - 1;
+        // Approximation: for daily, we divide the weekly contributor totals by 7 too.
+        // It's easier to just show the weekly top contributors for the whole week since we don't have true daily data.
+        const weekEndMs = t.timestamp + 7 * 24 * 60 * 60 * 1000 - 1;
+
+        daily.push({
+          date: format(d, 'MMM d, yyyy'),
+          additions: addPerDay,
+          deletions: delPerDay,
+          rawDate: startMs,
+          topContributors: getTopContributors(t.timestamp, weekEndMs) // Show the weekly leaders for this synthetic day
+        });
+      }
+    }
+    return daily;
+  }
+
+  if (scale === 'monthly' || scale === 'yearly') {
+    const grouped = {};
+    const formatStr = scale === 'monthly' ? 'MMM yyyy' : 'yyyy';
+    
+    for (const t of timeline) {
+      const d = new Date(t.timestamp);
+      const key = format(d, formatStr);
+      if (!grouped[key]) {
+        let startMs, endMs;
+        if (scale === 'monthly') {
+          startMs = new Date(d.getFullYear(), d.getMonth(), 1).getTime();
+          endMs = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59).getTime();
+        } else {
+          startMs = new Date(d.getFullYear(), 0, 1).getTime();
+          endMs = new Date(d.getFullYear(), 11, 31, 23, 59, 59).getTime();
+        }
+        
+        grouped[key] = { 
+          date: key, 
+          additions: 0, 
+          deletions: 0, 
+          rawDate: startMs,
+          startMs,
+          endMs
+        };
+      }
+      grouped[key].additions += t.additions;
+      grouped[key].deletions += t.deletions;
+    }
+    
+    return Object.values(grouped).sort((a, b) => a.rawDate - b.rawDate).map(g => ({
+      ...g,
+      topContributors: getTopContributors(g.startMs, g.endMs)
+    }));
+  }
+
+  return [];
+};

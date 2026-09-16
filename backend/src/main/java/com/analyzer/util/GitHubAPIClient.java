@@ -112,6 +112,10 @@ public class GitHubAPIClient {
         return get("/users/" + username, Map.class);
     }
 
+    public Object[] getContributorStats(String owner, String repo) {
+        return get("/repos/" + owner + "/" + repo + "/stats/contributors", Object[].class);
+    }
+
     public Object[] getUserRepos(String username) {
         return get("/users/" + username + "/repos?type=owner&sort=pushed&per_page=10", Object[].class);
     }
