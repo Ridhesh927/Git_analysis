@@ -4,6 +4,7 @@ import { Sparkles, GitBranch, BarChart2, TrendingUp, GitFork } from 'lucide-reac
 
 import SearchBar from '../components/SearchBar';
 import RepositoryCard from '../components/RepositoryCard';
+import LoadingOverlay from '../components/LoadingOverlay';
 import { searchRepository, listRepositories } from '../services/githubService';
 import { useEffect } from 'react';
 import '../styles/App.css';
@@ -46,6 +47,7 @@ export default function Home() {
 
   return (
     <main className="page-wrapper">
+      {loading && <LoadingOverlay />}
       <div className="hero">
         {/* Badge */}
         <div className="hero__badge">
