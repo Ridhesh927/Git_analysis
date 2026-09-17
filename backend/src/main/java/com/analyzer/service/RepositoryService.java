@@ -25,6 +25,11 @@ public class RepositoryService {
      * Search (or refresh) a repository by owner/name.
      */
     public RepoStatsDTO searchRepository(String owner, String name) {
+        Optional<Repository> existing = repoRepo.findByOwnerAndName(owner, name);
+        if (existing.isPresent()) {
+            return getById(existing.get().getId());
+        }
+
         Repository repo = githubAPIService.fetchAndSaveRepository(owner, name);
         
         // Fetch all data immediately so it's ready in the DB for the dashboard

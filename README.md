@@ -166,4 +166,4 @@ If you encounter issues with Git cloning, ensure:
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the  License.

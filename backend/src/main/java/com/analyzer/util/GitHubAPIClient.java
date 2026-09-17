@@ -57,6 +57,13 @@ public class GitHubAPIClient {
             log.warn("GitHub API conversion error for {} (usually empty 202 response or rate limit object): {}", url,
                     e.getMessage());
             return null;
+        } catch (org.springframework.web.client.RestClientException e) {
+            if (e.getMessage() != null && e.getMessage().contains("Error while extracting response")) {
+                log.warn("GitHub API empty/invalid body for {} (often 202 Accepted): {}", url, e.getMessage());
+                return null;
+            }
+            log.error("GitHub API RestClientException for {}: {}", url, e.getMessage());
+            throw new RuntimeException("GitHub API request failed: " + e.getMessage(), e);
         } catch (Exception e) {
             log.error("GitHub API error for {}: {}", url, e.getMessage());
             throw new RuntimeException("GitHub API request failed: " + e.getMessage(), e);
