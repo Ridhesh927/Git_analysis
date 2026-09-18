@@ -18,9 +18,9 @@ export default function LoadingOverlay() {
       color: '#fff'
     }}>
       <div style={{
-        width: '280px',
-        height: '280px',
-        borderRadius: '50%',
+        width: '400px',
+        aspectRatio: '16/9',
+        borderRadius: '16px',
         overflow: 'hidden',
         boxShadow: '0 0 40px rgba(14, 165, 233, 0.4)',
         border: '2px solid rgba(56, 189, 248, 0.5)',

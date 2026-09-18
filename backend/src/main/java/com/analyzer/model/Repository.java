@@ -24,6 +24,7 @@ public class Repository {
     private String name;
 
     private String fullName;
+    @Column(columnDefinition = "TEXT")
     private String description;
     private String language;
     private Long stars;
